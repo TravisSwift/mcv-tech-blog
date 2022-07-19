@@ -1,10 +1,7 @@
 const router = require('express').Router();
 const sequelize = require('../../config/connection');
-const { Post, User, Comment,  } = require('../../models');
+const { Post, User, Comment, Vote } = require('../../models');
 const withAuth = require('../../utils/auth');
-
-
-
 
 // get all users
 router.get('/', (req, res) => {
@@ -39,8 +36,6 @@ router.get('/', (req, res) => {
     });
 });
 
-// get single post
-
 router.get('/:id', (req, res) => {
   Post.findOne({
     where: {
@@ -51,7 +46,7 @@ router.get('/:id', (req, res) => {
       'post_url',
       'title',
       'created_at',
-    //   [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
+      [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
     ],
     include: [
       {
@@ -81,8 +76,6 @@ router.get('/:id', (req, res) => {
     });
 });
 
-// Create a post
-
 router.post('/', withAuth, (req, res) => {
   // expects {title: 'Taskmaster goes public!', post_url: 'https://taskmaster.com/press', user_id: 1}
   Post.create({
@@ -97,33 +90,40 @@ router.post('/', withAuth, (req, res) => {
     });
 });
 
-
-router.put("/:id", withAuth, (req, res) => {
-  Post.update({
-          title: req.body.title,
-          content: req.body.post_content,
-      }, {
-          where: {
-              id: req.params.id,
-          },
-      })
-      .then((dbPostData) => {
-          if (!dbPostData) {
-              res.status(404).json({
-                  message: "No post found with this id"
-              });
-              return;
-          }
-          res.json(dbPostData);
-      })
-      .catch((err) => {
-          console.log(err);
-          res.status(500).json(err);
-      });
+router.put('/upvote', withAuth, (req, res) => {
+  // custom static method created in models/Post.js
+  Post.upvote({ ...req.body, user_id: req.session.user_id }, { Vote, Comment, User })
+    .then(updatedVoteData => res.json(updatedVoteData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
+router.put('/:id', withAuth, (req, res) => {
+  Post.update(
+    {
+      title: req.body.title
+    },
+    {
+      where: {
+        id: req.params.id
+      }
+    }
+  )
+    .then(dbPostData => {
+      if (!dbPostData) {
+        res.status(404).json({ message: 'No post found with this id' });
+        return;
+      }
+      res.json(dbPostData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
 
-// Delete a post
 router.delete('/:id', withAuth, (req, res) => {
   console.log('id', req.params.id);
   Post.destroy({
