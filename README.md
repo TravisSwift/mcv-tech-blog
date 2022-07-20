@@ -5,9 +5,14 @@ A tech blog using Model View Controller
 
 Description
 
-A tech blog where users can post things and glorious conversations about technology, plants, or the latest episode of Better Call Saul. 
+A tech blog where users can post things and have glorious conversations about technology, plants, or the latest episode of Better Call Saul. 
 
-Users are able to comment on posts and to create posts. They can view their posts in the dashboard, and have the option to edit and delete them.
+Users are able to sign up, login, post, edit, and delete comments and comment on other people's posts.   
+
+## To run the app enter: "npm start" in the command line of the terminal.
+
+![image](https://user-images.githubusercontent.com/96952755/180025612-0bd37fc5-c12b-4ef2-b887-784a904fcce8.png)
+
 
 
 Techonology used:
