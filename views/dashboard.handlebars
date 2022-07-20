@@ -1,7 +1,23 @@
-<section class="new-post-section">
+{{!-- <section class="new-post-section">
     <button type="submit" class="btn" id="create-new-post">+ Create new post</button>
-</section>
+</section> --}}
 
+<section>
+  <h2>Create New Post</h2>
+
+  <form class="new-post-form">
+    <div>
+      <label for="post-title">Title</label>
+      <input type="text" id="post-title" name="post-title" />
+    </div>
+  
+ <div class="post-content">
+                    <label for="post-content">Content</label>
+                    <textarea class="entry-field" id="post-content" name="post-content">{{post.content}}</textarea>
+                </div>
+                <button type="submit">Create Post</button>
+  </form>
+</section>
 
 {{#if posts.length}}
 <section>
@@ -17,4 +33,4 @@
 </section>
 {{/if}}
 
-<script src="/javascript/create-post.js"></script>
+<script src="/javascript/add-post.js"></script>
